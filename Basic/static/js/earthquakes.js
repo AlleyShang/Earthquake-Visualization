@@ -20,19 +20,19 @@ function chooseColor(magnitude) {
   if (magnitude > 5) {
     return '#FF4500';
   }
-  else if (magnitude > 4 && magnitude < 5) {
+  else if (magnitude >= 4 && magnitude <= 5) {
     return '#FF8C00';
   }
-  else if (magnitude > 3 && magnitude < 4) {
+  else if (magnitude >= 3 && magnitude <= 4) {
     return '#FFA500';
   }
-  else if (magnitude > 2 && magnitude < 3) {
+  else if (magnitude >= 2 && magnitude <= 3) {
     return '#FFD700';
   }
-  else if (magnitude > 1 && magnitude < 2) {
+  else if (magnitude >= 1 && magnitude <= 2) {
     return '#ADFF2F';
   }
-  else if (magnitude > 0 && magnitude < 1) {
+  else if (magnitude >= 0 && magnitude <= 1) {
     return '#7FFF00';
   }
   else {
@@ -96,5 +96,5 @@ d3.json(link, function(data) {
     };
 
     // Add the legend to the map
-    legend.addTo(map);
+    legend.addTo(myMap);
 });
