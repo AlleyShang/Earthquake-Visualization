@@ -18,8 +18,9 @@ Level-1 of the project is to visualize an earthquake data set.
 
    ![3-Data](Images/3-Data.png)
 
-   The USGS provides earthquake data in a number of different formats, updated every 5 minutes] including GeoJSON. 
-   Dataset used here is: 'All Earthquakes from the Past 7 Days'(https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson) which a JSON representation of that data.
+   The USGS provides earthquake data in a number of different formats, updated every 5 minutes] including GeoJSON. Dataset
+   used here is: 
+      * 'All Earthquakes from the Past Days' (https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson)              which a JSON representation of that data.
 
    ![4-JSON](Images/4-JSON.png)
 
@@ -35,7 +36,7 @@ Level-1 of the project is to visualize an earthquake data set.
 
 - - -
 
-### Level 2: More Data 
+### Level 2: Advanced Visualization 
 
 ![5-Advanced](Images/5-Advanced.png)
 
