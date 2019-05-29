@@ -55,9 +55,8 @@ d3.json(link, function(data) {
     var titles = []; 
     features.forEach(function(d) {
       var title = d.properties.title;
-      var words = title.split(" ");
-      words = words.slice(-2).join(" ")
-      titles.push(words);
+      var words = title.split("of");
+      titles.push(words[1]);
     });
 
     // Loop through each feature and add a marker using the latitude/longitude values
