@@ -1,7 +1,7 @@
 // Create a map object and pass in the earthquakes and tectonic plates layers along with the satellite basemap
 var myMap = L.map("map", {
   center: [27.561852, -54.662326],
-  zoom: 4
+  zoom: 3
 });
 
 // Define an outdoors tile layer for the map
@@ -33,3 +33,4 @@ d3.json(tectonicplatesLink, function(data) {
         onEachFeature: onEachFeature
     }).addTo(myMap);
 });
+
