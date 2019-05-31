@@ -18,15 +18,15 @@ Level-1 of the project is to visualize an earthquake data set.
 
    ![3-Data](Images/3-Data.png)
 
-   The USGS provides earthquake data in a number of different formats, updated every 5 minutes] including GeoJSON. Dataset
+   The USGS provides earthquake data in a number of different formats, (updated every 5 minutes) including GeoJSON. Dataset
    used here is: 
-      * 'All Earthquakes from the Past Days' (https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson)              which a JSON representation of that data.
+      * 'All Earthquakes from the Past 7 Days' (https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson)              which a JSON representation of that data.
 
    ![4-JSON](Images/4-JSON.png)
 
 2. **Import & Visualize the Data**
 
-   This step creates a map using Leaflet that plots all of the earthquakes from the data set based on their longitude and latitude.
+   This step creates a map using Leaflet that plots all of the earthquakes from the dataset based on their longitude and latitude.
 
    * Data markers reflect the magnitude of the earthquake in their size and color. Earthquakes with higher magnitudes appear larger and darker in color.
 
