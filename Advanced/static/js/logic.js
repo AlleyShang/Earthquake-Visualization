@@ -2,43 +2,21 @@
 var earthquakeLink = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 var tectonicplatesLink = "https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_plates.json";
 
-// Function to choose marker color based on earthquake magnitude 
-function chooseColor(magnitude) {
-  if (magnitude > 5) {
-    return '#FF4500';
-  }
-  else if (magnitude >= 4 && magnitude <= 5) {
-    return '#FF8C00';
-  }
-  else if (magnitude >= 3 && magnitude <= 4) {
-    return '#FFA500';
-  }
-  else if (magnitude >= 2 && magnitude <= 3) {
-    return '#FFD700';
-  }
-  else if (magnitude >= 1 && magnitude <= 2) {
-    return '#ADFF2F';
-  }
-  else if (magnitude >= 0 && magnitude <= 1) {
-    return '#7FFF00';
-  }
-  else {
-    return '#fff';
-  }
-}
+// Grab the earthquake data with d3
+d3.json(earthquakeLink, function(earthquakeData) {
 
-function createEarthquakeFeatures(earthquakeData) {
+  // Call createFeatures on the data
+  createFeatures(earthquakeData);
 
-  // Define an array to hold earthquake data markers
-  var earthquakeMarkers = [];
+});
 
-  // Function to adjust marker radius based on earthquake magnitude
-  function markerSize(magnitude) {
-    return magnitude * 20000;
-  }
+function createFeatures(earthquakeData) {
 
   // Grab the 'features' from the data
   var features = earthquakeData.features;
+
+  // Create an array to hold earthquake data markers
+  var earthquakeMarkers = [];
 
   // Grab the titles of the locations
   var titles = []; 
@@ -54,58 +32,22 @@ function createEarthquakeFeatures(earthquakeData) {
     // Add the circles to the earthquakeMarkers array
     earthquakeMarkers.push(
       L.circle([features[i].geometry.coordinates[1], features[i].geometry.coordinates[0]], {
-          fillOpacity: 0.75,
-          color: "#404040",
-          weight: 0.5,
-          // Adjust fill color
-          fillColor: chooseColor(features[i].properties.mag),
-          // Adjust radius
-          radius: markerSize(features[i].properties.mag)
+        fillOpacity: 0.75,
+        color: "#404040",
+        weight: 0.5,
+        // Adjust fill color
+        fillColor: chooseColor(features[i].properties.mag),
+        // Adjust radius
+        radius: markerSize(features[i].properties.mag)
       }).bindPopup("<h3>" + titles[i] + "</h3><hr><h3><center>" + features[i].properties.mag + " ML</center></h3>")
     );
   }
-  return earthquakeMarkers;
+
+  // Call createMap on earthquakes
+  createMap(earthquakeMarkers)
 }
 
-function createTectonicPlateFeatures(tectonicplatesData) {
-
-  // Define a variable to hold tectonic plates data markers
-  var tectonicplatesMarkers = 0;
-  
-  // Define a function we want to run once for each feature in the features array
-  // Give each feature a popup describing the name of the plate
-  function onEachFeature(feature, layer) {
-    layer.setStyle({
-      color: '#FFA500'
-    });
-    layer.bindPopup("<h3>" + feature.properties.PlateName + "</h3>")
-  }
-
-  // Create a GeoJSON array containing the features array grabbed from the tectonic plates data
-  // Run the onEachFeature function once for each piece of data in the array
-  tectonicplatesMarkers = L.geoJson(tectonicplatesData, {
-    onEachFeature: onEachFeature
-  });
-
-  return tectonicplatesMarkers;
-}
-
-// Grab the earthquake data with d3
-d3.json(earthquakeLink, function(earthquakeData) {
-
-  // Grab the tectonic plates data with d3
-  d3.json(tectonicplatesLink, function(tectonicplatesData) {
-
-    var tectonicplates = createTectonicPlateFeatures(tectonicplatesData);
-
-    var earthquakes = createEarthquakeFeatures(earthquakeData);
-
-    createMap(earthquakes, tectonicplates);
-
-  });
-});
-
-function createMap(earthquakeMarkers, tectonicplatesMarkers) {
+function createMap(earthquakeMarkers) {
 
   // Define a grayscale tile layer to the map
   var lightmap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
@@ -131,10 +73,6 @@ function createMap(earthquakeMarkers, tectonicplatesMarkers) {
     accessToken: API_KEY
   });
 
-  // Create a layer group for each type of marker - earthquakes and tectonic plates
-  var earthquakes = L.layerGroup(earthquakeMarkers);
-  var tectonicplates = L.layerGroup(tectonicplatesMarkers);
-
   // Create a basemaps object containing all tile layers
   var baseMaps = {
     "Satellite": satellitemap,
@@ -142,18 +80,47 @@ function createMap(earthquakeMarkers, tectonicplatesMarkers) {
     "Outdoors": outdoormap 
   };
 
+  // Create layer groups for earthquakes and tectonic plates
+  var earthquakes = L.layerGroup(earthquakeMarkers);
+  var tectonicplates = new L.LayerGroup();
+
   // Create an overlays object contaning the earthquakes and tectonic plates layer groups
   var overlayMaps = {
     "Earthquakes": earthquakes,
     "Fault Lines": tectonicplates
   };
 
-
   // Create a map object and pass in the earthquakes and tectonic plates layers along with the satellite basemap
   var myMap = L.map("map", {
     center: [12.001712, -32.730358],
     zoom: 3,
     layers: [satellitemap, earthquakes, tectonicplates]
+  });
+
+  // Grab the tectonic plates data with d3
+  d3.json(tectonicplatesLink, function(tectonicplatesData) {
+    
+    // Define a function we want to run once for each feature in the features array
+    // Give each feature a popup describing the name of the plate
+    function onEachFeature(feature, layer) {
+      layer.setStyle({
+        color: '#FFA500'
+      });
+      layer.bindPopup("<h3>" + feature.properties.PlateName + "</h3>")
+    }
+
+    // Create a GeoJSON array containing the features array grabbed from the tectonic plates data
+    // Run the onEachFeature function once for each piece of data in the array
+    L.geoJson(tectonicplatesData, {
+      onEachFeature: onEachFeature
+    }).addTo(tectonicplates);
+
+    // Create a GeoJSON array containing tectonic plates features along with some styling added
+    // L.geoJson(tectonicplatesData, {
+    //   color: "orange",
+    //   weight: 2
+    // }).addTo(tectonicplates);
+
   });
 
   // Create a legend for the map
@@ -183,3 +150,34 @@ function createMap(earthquakeMarkers, tectonicplatesMarkers) {
       collapsed: false
   }).addTo(myMap);
 }
+
+// Function to choose marker color based on earthquake magnitude 
+function chooseColor(magnitude) {
+  if (magnitude > 5) {
+    return '#FF4500';
+  }
+  else if (magnitude >= 4 && magnitude <= 5) {
+    return '#FF8C00';
+  }
+  else if (magnitude >= 3 && magnitude <= 4) {
+    return '#FFA500';
+  }
+  else if (magnitude >= 2 && magnitude <= 3) {
+    return '#FFD700';
+  }
+  else if (magnitude >= 1 && magnitude <= 2) {
+    return '#ADFF2F';
+  }
+  else if (magnitude >= 0 && magnitude <= 1) {
+    return '#7FFF00';
+  }
+  else {
+    return '#fff';
+  }
+}
+
+// Function to adjust marker radius based on earthquake magnitude
+function markerSize(magnitude) {
+  return magnitude * 20000;
+}
+
