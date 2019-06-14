@@ -114,13 +114,7 @@ function createMap(earthquakeMarkers) {
     L.geoJson(tectonicplatesData, {
       onEachFeature: onEachFeature
     }).addTo(tectonicplates);
-
-    // Create a GeoJSON array containing tectonic plates features along with some styling added
-    // L.geoJson(tectonicplatesData, {
-    //   color: "orange",
-    //   weight: 2
-    // }).addTo(tectonicplates);
-
+    
   });
 
   // Create a legend for the map
